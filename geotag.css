@@ -1,0 +1,169 @@
+* {
+  font-family: "Palatino", "Georgia", serif;
+  color: #555;
+}
+
+.c_drop_container {
+  width: 100%;
+  text-align: center;
+}
+
+.c_drop_zone {
+  border: 2px dotted #ccc;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #bbb;
+  margin-bottom: 2px;
+  margin-right: auto;
+  display: block;
+  padding: 13px;
+}
+
+.c_drop_button {
+  border: 1px solid #555;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #ccc;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  float: right;
+}
+
+.c_drop_button:hover {
+  background-color: #bbb;
+}
+
+.c_img_thumb {
+  margin: 1px;
+  width: 100px;
+  height: 75px;
+}
+
+.c_disabled {
+  display: none;
+}
+
+.c_track_tooltip {
+  margin: 0px;
+  background-color: #ccc;
+  border-color: #ccc;
+  padding: 2px;
+  font-size: 9px;
+  font-weight: lighter;
+}
+
+.c_track_tooltip::before {
+  border-right-color: #ccc;
+}
+
+.c_map_marker_tooltip {
+  font-size: 9px;
+  font-weight: lighter;
+}
+
+.c_map_marker_tooltip img {
+  width: 48px;
+  height: 36px;
+}
+
+.c_map_marker_tooltip div {
+}
+
+.c_img_elem {
+  position: relative;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.c_img_elem .c_img_pin {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 0%;
+  left: 5%;
+  color: #ccc;
+}
+
+.c_img_elem .c_img_pin_tagged {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 0%;
+  right: 5%;
+}
+
+.c_img_elem .c_img_tooltip {
+  visibility: hidden;
+  width: 150px;
+  background-color: #ccc;
+  padding: 5px;
+  border-radius: 6px;
+
+  position: absolute;
+  z-index: 900;
+  bottom: 50%;
+  left: 50%;
+
+  opacity: 0;
+  transition: opacity .5s;
+}
+
+.c_img_elem .c_img_tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #ccc transparent transparent transparent;
+  opacity: 0.9;
+}
+
+.c_img_elem:hover .c_img_tooltip {
+  visibility: visible;
+  opacity: 0.9;
+}
+
+.c_time_input {
+  display: block;
+}
+
+.c_range_time {
+  width: 697px;
+}
+
+.c_tickmarks {
+  position: relative;
+  float: left;
+  width: 90.25px;
+  text-align: center;
+  color: #b2b2b2;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.c_tickmarks li::before {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  left: -68px;
+  content: "";
+  margin: 0 auto;
+  width: 9px;
+  height: 9px;
+  background: #b2b2b2;
+  border-radius: 50%;
+}
+
+h1 {
+  font-size: 35px;
+  font-weight: bold;
+  background-color: #ccc;
+  padding: 15px;
+  margin: 10px 0px;
+}

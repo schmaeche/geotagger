@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Geotagger</title>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css"
+   integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw=="
+   crossorigin=""/>
+  <link rel="stylesheet" href="geotag.css" />
+  <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
+   integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
+   crossorigin="">
+  </script>
+  <script src="mapmgr.js"></script>
+  <script src="filemgr.js"></script>
+
+</head>
+<body onload="initMap()">
+  <h1>Geotagger</h1>
+  <div class="c_drop_container">
+    <button id="id_gpx_btn" class="c_drop_button c_disabled" onclick="removeGPX(event)">Remove GPX files</button>
+    <div id="id_gpx_drop_zone" class="c_drop_zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileSelect(event)">Drop GPX file(s) here</div>
+  </div>
+	<output id="id_gpx_list"></output>
+  <div class="c_drop_container">
+    <span id="id_img_drop_zone" class="c_drop_zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileSelect(event)">Drop Images here</span>
+  </div>
+  <div id="id_map" style="height: 300px"></div>
+  <div id="id_img_list"></div>
+</body>
+</html>
