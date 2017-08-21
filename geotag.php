@@ -68,7 +68,26 @@
     </form>
   </div>
   <div id="id_img_list">
-    <?php include 'src/imgmgr.php' ?>
+    <?php include 'src/imgmgr.php'; ?>
   </div>
+  <!--script type="text/javascript">
+    //check for browser support
+    if(typeof(EventSource)!=="undefined") {
+      //create an object, passing it the name and location of the server side script
+      var eSource = new EventSource("src/updateimages.php");
+      //detect message receipt
+      eSource.onmessage = function(event) {
+        console.log("es:onmessage was here");
+        //write the received data to the page
+        var list = document.getElementById("id_img_list");
+        var elem = document.createElement("div");
+        elem.innerHTML = event.data;
+        list.appendChild( elem);
+      };
+    }
+    else {
+      document.getElementById("id_img_list").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
+    }
+  </script-->
 </body>
 </html>

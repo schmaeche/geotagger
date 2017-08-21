@@ -15,6 +15,13 @@ function pad( n, width=2, z=0) {
 function initialize() {
   initMap();
   initializeImagesOnMap();
+  // var images = document.getElementsByClassName("c_img_thumb");
+  // for (var i = 0; i < images.length; i++) {
+  //   images[i].setAttribute("src", images[i].getAttribute("data-src"));
+  //   images[i].onload = function() {
+  //     this.removeAttribute("data-src");
+  //   };
+  // }
 }
 
 function initializeImagesOnMap() {
@@ -46,16 +53,25 @@ function initializeImagesOnMap() {
 
 function removeImages( geoTaggedOnly = false) {
   removeImg( geoTaggedOnly);
-  // hide pin icon on image when lat and lng are set for image
-  var pinElem = document.getElementsByClassName("c_img_pin_tagged");
-  for( var i = 0; i < pinElem.length; i++) {
-    pinElem[i].classList.add('c_disabled');
-  }
 
-  if( !geoTaggedOnly) {
-    pinElem = document.getElementsByClassName("c_img_pin");
-    for( var i = 0; i < pinElem.length; i++) {
-      pinElem[i].classList.add('c_disabled');
+  var elems = document.getElementsByClassName("c_img_elem");
+  for (var i = 0; i < elems.length; i++) {
+    // hide pin icon on image when lat and lng are set for image
+    var pinElem = elems[i].getElementsByClassName("c_img_pin_tagged");
+    pinElem[0].classList.add('c_disabled');
+    var ttipElem = elems[i].getElementsByClassName("c_img_tooltip")[0];
+    var latElem = ttipElem.getElementsByClassName("img_new_lat");
+    if( latElem.length) {
+      ttipElem.removeChild(latElem[0]);
+    }
+    var lngElem = ttipElem.getElementsByClassName("img_new_lng");
+    if( lngElem.length) {
+      ttipElem.removeChild(lngElem[0]);
+    }
+    // hide pin icon
+    if( !geoTaggedOnly) {
+      pinElem = elems[i].getElementsByClassName("c_img_pin");
+      pinElem[0].classList.add('c_disabled');
     }
   }
 
@@ -89,6 +105,17 @@ function updateGeoLocations() {
       // show pin icon on image when lat and lng are set for image
       var pinElem = imgElems[i].getElementsByClassName("c_img_pin_tagged")[0];
       pinElem.className = pinElem.className.replace('c_disabled', '');
+      var tooltip = imgElems[i].getElementsByClassName("c_img_tooltip")[0];
+      var newElem = document.createElement('div');
+      newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lat');
+      newElem.setAttribute('data-lat', latlng.lat);
+      newElem.innerHTML = "New latitude: " + latlng.lat.toFixed(6);
+      tooltip.appendChild(newElem);
+      newElem = document.createElement('div');
+      newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lng');
+      newElem.setAttribute('data-lng', latlng.lng);
+      newElem.innerHTML = "New longitude: " + latlng.lng.toFixed(6);
+      tooltip.appendChild(newElem);
       //console.log('actionhandler.js:updateGeoLocations was here');
       var tagBtn = document.getElementById("id_geotag_btn");
       tagBtn.classList.remove('c_disabled');
@@ -154,7 +181,7 @@ function setGeotag( event) {
   // collect data
   var data = { "file": "IMG_20170626_125122.jpg", "lat": "0", "lng": "0"}
   // send ajax request
-  sendPostRequest("tagimage.php", updateImageData, JSON.stringify(data));
+  sendPostRequest("src/tagimage.php", updateImageData, JSON.stringify(data));
 }
 
 function updateImageData( data) {
