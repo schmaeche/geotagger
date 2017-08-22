@@ -14,14 +14,11 @@ function pad( n, width=2, z=0) {
 
 function initialize() {
   initMap();
-  initializeImagesOnMap();
-  // var images = document.getElementsByClassName("c_img_thumb");
-  // for (var i = 0; i < images.length; i++) {
-  //   images[i].setAttribute("src", images[i].getAttribute("data-src"));
-  //   images[i].onload = function() {
-  //     this.removeAttribute("data-src");
-  //   };
-  // }
+  //initializeImagesOnMap();
+  var images = document.getElementsByClassName("img_loading");
+  if( images.length) {
+    retrieveImage(images[0]);
+  }
 }
 
 function initializeImagesOnMap() {

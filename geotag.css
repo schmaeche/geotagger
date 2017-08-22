@@ -48,6 +48,8 @@
 
 .c_img_thumb[data-src] {
   opacity: 0;
+  width: 0px;
+  height: 0px;
 }
 
 .c_disabled {

@@ -14,3 +14,37 @@ function sendPostRequest( url, callback, data) {
   };
   request.send( data);
 }
+
+function sendGetRequest( url, callback, data) {
+  var request = new XMLHttpRequest();
+  request.open( "GET", url, true);
+  request.onreadystatechange = function() {
+    if ( this.readyState == 4 && this.status == 200) {
+      callback( this, data);
+    }
+  };
+  request.send();
+}
+
+
+function retrieveImage( node) {
+  node.setAttribute("src", node.getAttribute("data-src"));
+  node.onload = function() {
+    this.removeAttribute("data-src");
+  };
+  var filename = node.getAttribute("alt");
+  sendGetRequest( "src/updateimages.php?file=" + filename, updateImageElement, filename)
+}
+
+
+function updateImageElement( request, file) {
+  console.log("ajaxhandler:updateImageElement");
+  var images = document.getElementsByClassName("c_img_elem");
+  for (var i = 0; i < images.length; i++) {
+    var loading = images[i].getElementsByClassName("img_loading");
+    if( loading.length && loading[0].alt === file) {
+      images[i].innerHTML = request.responseText;
+      break;
+    }
+  }
+}
