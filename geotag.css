@@ -42,8 +42,6 @@
   margin: 1px;
   width: 100px;
   height: 75px;
-  opacity: 1;
-  transition: opacity 0.3s;
 }
 
 .c_img_thumb[data-src] {
