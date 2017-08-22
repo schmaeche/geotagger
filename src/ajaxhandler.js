@@ -35,16 +35,3 @@ function retrieveImage( node) {
   var filename = node.getAttribute("alt");
   sendGetRequest( "src/updateimages.php?file=" + filename, updateImageElement, filename)
 }
-
-
-function updateImageElement( request, file) {
-  console.log("ajaxhandler:updateImageElement");
-  var images = document.getElementsByClassName("c_img_elem");
-  for (var i = 0; i < images.length; i++) {
-    var loading = images[i].getElementsByClassName("img_loading");
-    if( loading.length && loading[0].alt === file) {
-      images[i].innerHTML = request.responseText;
-      break;
-    }
-  }
-}

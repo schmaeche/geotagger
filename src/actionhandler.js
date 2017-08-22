@@ -14,11 +14,7 @@ function pad( n, width=2, z=0) {
 
 function initialize() {
   initMap();
-  //initializeImagesOnMap();
-  var images = document.getElementsByClassName("img_loading");
-  if( images.length) {
-    retrieveImage(images[0]);
-  }
+  getNextImage();
 }
 
 function initializeImagesOnMap() {
@@ -172,6 +168,25 @@ function updateAdjustment(e) {
   updateGeoLocations();
 }
 
+function getNextImage() {
+  var images = document.getElementsByClassName("img_loading");
+  if( images.length) {
+    retrieveImage(images[0]);
+  }
+}
+
+function updateImageElement( request, file) {
+  console.log("ajaxhandler:updateImageElement");
+  var images = document.getElementsByClassName("c_img_elem");
+  for (var i = 0; i < images.length; i++) {
+    var loading = images[i].getElementsByClassName("img_loading");
+    if( loading.length && loading[0].alt === file) {
+      images[i].innerHTML = request.responseText;
+      getNextImage();
+      break;
+    }
+  }
+}
 
 function setGeotag( event) {
   // block button show spinner
