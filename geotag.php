@@ -20,6 +20,7 @@
   <script src="src/actionhandler.js"></script>
   <script src="src/ajaxhandler.js"></script>
 </head>
+
 <body onload="initialize()">
   <h1>Geotagger v0.02</h1>
   <div class="c_drop_container">
@@ -31,8 +32,8 @@
   <!--div class="c_drop_container">
     <span id="id_img_drop_zone" class="c_drop_zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileSelect(event)">Drop Images here</span>
   </div -->
-  <div id="id_map" style="height: 300px"></div>
-  <div class="c_time_input">Image time correction:
+  <div class="c_time_input">
+    <h2>Image time correction:</h2>
     <output id="id_range_time_out" value="0">+00:00:00 hrs</output>
     <?php
     $currentTimezone = 0;
@@ -59,35 +60,15 @@
     <form oninput="updateAdjustment(event)">
       <label for="id_range_time">Second adjustment</label>
       <input type="range" id="id_range_time" class="c_range_time" min="-348" max="348" step="1" value="0" list="tickmarks">
-      <!--ul id="tickmarks" class="c_tickmarks">
-        <li>0</li>
-        <li>120</li>
-        <li>240</li>
-        <li>348</li>
-      </ul-->
     </form>
   </div>
+  <div id="id_map" style="height: 300px"></div>
   <div id="id_img_list">
+    <!--h2>Images</h2-->
     <?php include 'src/imgmgr.php'; ?>
   </div>
-  <!--script type="text/javascript">
-    //check for browser support
-    if(typeof(EventSource)!=="undefined") {
-      //create an object, passing it the name and location of the server side script
-      var eSource = new EventSource("src/updateimages.php");
-      //detect message receipt
-      eSource.onmessage = function(event) {
-        console.log("es:onmessage was here");
-        //write the received data to the page
-        var list = document.getElementById("id_img_list");
-        var elem = document.createElement("div");
-        elem.innerHTML = event.data;
-        list.appendChild( elem);
-      };
-    }
-    else {
-      document.getElementById("id_img_list").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
-    }
-  </script-->
+  <div id="id_img_download" class="c_img_download">
+    <h2>Download tagged images</h2>
+  </div>
 </body>
 </html>

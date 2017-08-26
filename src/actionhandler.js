@@ -6,8 +6,6 @@
 /******************************************************************************
 Constants and helper functions
 ******************************************************************************/
-const rangeThresholds = [ 120, 240, 348];
-
 var Image = function( filename, url, date, lat, lng){
   this.filename = filename;
   this.url = url;
@@ -167,7 +165,7 @@ function updateGeoLocations() {
 /******************************************************************************
 Input handling functions
 ******************************************************************************/
-
+const rangeThresholds = [ 120, 240, 348];
 
 function updateAdjustment(e) {
   var timeOffset = 0;
@@ -197,6 +195,20 @@ function updateAdjustment(e) {
 /******************************************************************************
 Ajax interaction functions
 ******************************************************************************/
+function AjaxImage() {
+  this.file = "";
+  this.lat = "0";
+  this.lng = "0";
+}
+
+function retrieveImage( node) {
+  node.setAttribute("src", node.getAttribute("data-src"));
+  node.onload = function() {
+    this.removeAttribute("data-src");
+  };
+  var filename = node.getAttribute("alt");
+  sendGetRequest( "src/updateimages.php?file=" + filename, updateImageElement, filename)
+}
 
 function getNextImage() {
   var images = document.getElementsByClassName("img_loading");
@@ -210,9 +222,11 @@ function updateImageElement( request, file) {
   var images = document.getElementsByClassName("c_img_elem");
   for (var i = 0; i < images.length; i++) {
     var loading = images[i].getElementsByClassName("img_loading");
+    // there should be only one element for each file hence we break after triggering next image request
     if( loading.length && loading[0].alt === file) {
       images[i].innerHTML = request.responseText;
       showImageOnMap( images[i], false);
+      showWholeImages();
       getNextImage();
       break;
     }
@@ -221,12 +235,54 @@ function updateImageElement( request, file) {
 
 function setGeotag( event) {
   // block button show spinner
+  var button = document.getElementById("id_geotag_btn");
+  button.setAttribute("disabled", "disabled");
+  var img = document.createElement("img");
+  img.src = "img/Loading_icon.gif";
+  img.width = "19";
+  img.height = "13";
+  button.innerHTML = "";
+  button.appendChild(img);
+
   // collect data
-  var data = { "file": "IMG_20170626_125122.jpg", "lat": "0", "lng": "0"}
+  var data = [];
+  var elems = document.getElementsByClassName("c_img_elem");
+  for (var i = 0; i < elems.length; i++) {
+    var fileElem = elems[i].getElementsByClassName("img_filename");
+    var latElem = elems[i].getElementsByClassName("img_new_lat");
+    var lngElem = elems[i].getElementsByClassName("img_new_lng");
+    if( fileElem.length && latElem.length && lngElem.length) {
+      var ajaxElem = new AjaxImage();
+      ajaxElem.file = fileElem[0].innerHTML;
+      ajaxElem.lat = latElem[0].dataset.lat;
+      ajaxElem.lng = lngElem[0].dataset.lng;
+      data.push(ajaxElem);
+    }
+  }
+  //var data = [ {"file": "foobar.jpg", "lat": "12.3456789", "lng": "-98.7654321"},
+  //             {"file": "IMG_20170626_125122.jpg", "lat": "-80.987654", "lng": "150.123456789"}];
+
   // send ajax request
-  sendPostRequest("src/tagimage.php", updateImageData, JSON.stringify(data));
+  if( data.length) {
+    sendPostRequest("src/tagimage.php", updateImageData, JSON.stringify(data));
+  }
+  else {
+    console.warn("actionhandler:setGeotag() make sure that button is only shown when images can be tagged!");
+    // enable button again
+    var button = document.getElementById("id_geotag_btn");
+    button.removeAttribute("disabled");
+    button.innerHTML = "Geotag";
+  }
 }
 
-function updateImageData( data) {
-  console.log("updateImageData: was here");
+function updateImageData( request) {
+  console.log("updateImageData: " + request.responseText);
+  // add download links to page
+  var linkList = document.getElementById("id_img_download");
+  linkList.innerHTML += request.responseText;
+
+  // activate geotag button again
+  var button = document.getElementById("id_geotag_btn");
+  button.removeAttribute("disabled");
+  button.innerHTML = "Geotag";
 }

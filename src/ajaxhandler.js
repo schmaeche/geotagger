@@ -25,13 +25,3 @@ function sendGetRequest( url, callback, data) {
   };
   request.send();
 }
-
-
-function retrieveImage( node) {
-  node.setAttribute("src", node.getAttribute("data-src"));
-  node.onload = function() {
-    this.removeAttribute("data-src");
-  };
-  var filename = node.getAttribute("alt");
-  sendGetRequest( "src/updateimages.php?file=" + filename, updateImageElement, filename)
-}
