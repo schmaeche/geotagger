@@ -130,7 +130,7 @@ function handleDragLeave(evt) {
 }
 
 function handleImgDragStart(evt) {
-  ev.dataTransfer.setData("text", ev.target.id);
+  evt.dataTransfer.setData("text", evt.target.id);
 }
 
 function removeGPX(e) {

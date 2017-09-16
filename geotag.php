@@ -6,13 +6,13 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css"
-   integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw=="
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+   integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
    crossorigin=""/>
   <link rel="stylesheet" href="geotag.css" />
   <!-- link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" -->
-  <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"
-   integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA=="
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin="">
   </script>
   <script src="src/mapmgr.js"></script>
@@ -22,7 +22,7 @@
 </head>
 
 <body onload="initialize()">
-  <h1>Geotagger v0.02</h1>
+  <h1>Geotagger v0.2</h1>
   <div class="c_drop_container">
     <button id="id_gpx_btn" class="c_drop_button c_disabled" onclick="removeGPX(event)">Remove GPX files</button>
     <button id="id_geotag_btn" class="c_drop_button c_disabled" onClick="setGeotag(event)">Geotag</button>
@@ -73,7 +73,7 @@
       <input type="range" id="id_range_time" class="c_range_time" min="-348" max="348" step="1" value="0" list="tickmarks">
     </form>
   </div>
-  <div id="id_map" style="height: 300px"></div>
+  <div id="id_map" style="height: 300px" ondragover="updateDragPin(event)" ondragenter="showDragPin(event)" ondrop="dropDragPin(event)" ondragend="drsagend(event)" ondragleave="hideDragPin(event)"></div>
   <div id="id_img_list">
     <!--h2>Images</h2-->
     <?php

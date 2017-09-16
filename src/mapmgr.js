@@ -14,6 +14,7 @@ var currentPosition;
 var trackLayer;
 var imageLayer;
 var newImageLayer;
+var dropMarker;
 
 //###############################
 //### Map Element definitions ###
@@ -378,4 +379,32 @@ function getGeoLocation( image) {
   }
 
   return null;
+}
+
+//###############################
+//### drag & drop handling    ###
+//###############################
+
+function showDropPin( e) {
+  if( null == dropMarker) {
+    //console.log("showDropPin:new");
+    dropMarker = L.marker( map.mouseEventToLatLng(e));
+    dropMarker.setOpacity(0.7);
+  }
+  else {
+    //console.log("showDropPin:typ");
+    dropMarker.setLatLng( map.mouseEventToLatLng(e));
+  }
+
+  if( false === map.hasLayer(dropMarker)) {
+    dropMarker.addTo(map);
+    //dropMarker.setOpacity(80);
+  }
+}
+
+function hideDropPin(e) {
+  if( dropMarker) {
+    //console.log("hideDropPin");
+    dropMarker.remove();
+  }
 }

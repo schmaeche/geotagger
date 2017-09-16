@@ -6,6 +6,8 @@
 /******************************************************************************
 Constants and helper functions
 ******************************************************************************/
+var gImageDrag = false;
+
 var Image = function( filename, url, date, lat, lng){
   this.filename = filename;
   this.url = url;
@@ -160,6 +162,54 @@ function updateGeoLocations() {
   for (var i = 0; i < imgElems.length; i++) {
     showImageOnMap( imgElems[i], true);
   }
+}
+
+/******************************************************************************
+Map dragging functions
+******************************************************************************/
+function handleImgDragStart(e) {
+  e.dataTransfer.setDragImage( e.currentTarget, 100, 100);
+}
+
+function showDragPin(e) {
+  // console.log("showDragPin");
+  if(e.preventDefault) {
+    e.preventDefault();
+  }
+
+  if (e.stopPropagation) {
+    e.stopPropagation(); // stops the browser from redirecting.
+  }
+  showDropPin(e);
+}
+
+function hideDragPin(e) {
+  // console.log("hideDragPin");
+  if(e.preventDefault) {
+    e.preventDefault();
+  }
+
+  if (e.stopPropagation) {
+    e.stopPropagation(); // stops the browser from redirecting.
+  }
+
+  hideDropPin(e);
+}
+
+function updateDragPin(e) {
+  if( e.preventDefault) {
+    e.preventDefault();
+  }
+  showDropPin(e);
+}
+
+function dropDragPin(e) {
+  //console.log("dropDragPin");
+  if (e.stopPropagation) {
+    e.stopPropagation(); // stops the browser from redirecting.
+  }
+
+  hideDropPin(e);
 }
 
 /******************************************************************************
