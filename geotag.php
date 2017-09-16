@@ -29,9 +29,20 @@
     <div id="id_gpx_drop_zone" class="c_drop_zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileSelect(event)">Drop GPX file(s) here</div>
   </div>
 	<output id="id_gpx_list"></output>
-  <!--div class="c_drop_container">
-    <span id="id_img_drop_zone" class="c_drop_zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileSelect(event)">Drop Images here</span>
-  </div -->
+  <?php
+    // ini_set('display_errors', 'On');
+    // error_reporting(E_ALL | E_STRICT);
+    //
+    // $whitelist = array('127.0.0.1', "::1");
+    // if( in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+    //     echo '<div class="c_drop_container">';
+    //     echo '<span id="id_img_drop_zone" class="c_drop_zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileSelect(event)">Drop Images here</span>';
+    //     echo '</div>';
+    //     echo '<div>Select images:';
+    //     echo '<input id="id_file_select" type="file" onchange="handleFileSelect(event);" webkitdirectory mozdirectory msdirectory odirectory directory multiple="multiple"/>';
+    //     echo '</div>';
+    // }
+  ?>
   <div class="c_time_input">
     <h2>Image time correction:</h2>
     <output id="id_range_time_out" value="0">+00:00:00 hrs</output>
@@ -65,7 +76,12 @@
   <div id="id_map" style="height: 300px"></div>
   <div id="id_img_list">
     <!--h2>Images</h2-->
-    <?php include 'src/imgmgr.php'; ?>
+    <?php
+      // $whitelist = array('127.0.0.1', "::1");
+      // if( !in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+        include 'src/imgmgr.php';
+      // }
+    ?>
   </div>
   <div id="id_img_download" class="c_img_download">
     <h2>Download tagged images</h2>
