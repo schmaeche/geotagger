@@ -169,6 +169,13 @@ Map dragging functions
 ******************************************************************************/
 function handleImgDragStart(e) {
   e.dataTransfer.setDragImage( e.currentTarget, 100, 100);
+  var tooltip = e.currentTarget.parentNode.getElementsByClassName("c_img_tooltip")[0];
+  tooltip.style.visibility = "hidden";
+}
+
+function handleImgDragEnd(e) {
+  var tooltip = e.currentTarget.parentNode.getElementsByClassName("c_img_tooltip")[0];
+  tooltip.style.visibility = "";
 }
 
 function showDragPin(e) {
@@ -197,14 +204,18 @@ function hideDragPin(e) {
 }
 
 function updateDragPin(e) {
+  // console.log("show");
   if( e.preventDefault) {
     e.preventDefault();
+  }
+  if (e.stopPropagation) {
+    e.stopPropagation(); // stops the browser from redirecting.
   }
   showDropPin(e);
 }
 
 function dropDragPin(e) {
-  //console.log("dropDragPin");
+  // console.log("dropDragPin");
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }

@@ -73,7 +73,7 @@
       <input type="range" id="id_range_time" class="c_range_time" min="-348" max="348" step="1" value="0" list="tickmarks">
     </form>
   </div>
-  <div id="id_map" style="height: 300px" ondragover="updateDragPin(event)" ondragenter="showDragPin(event)" ondrop="dropDragPin(event)" ondragend="drsagend(event)" ondragleave="hideDragPin(event)"></div>
+  <div id="id_map" style="height: 300px" ondragover="updateDragPin(event)" ondragenter="showDragPin(event)" ondrop="dropDragPin(event)" ondragleave="hideDragPin(event)"></div>
   <div id="id_img_list">
     <!--h2>Images</h2-->
     <?php

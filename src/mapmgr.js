@@ -386,25 +386,26 @@ function getGeoLocation( image) {
 //###############################
 
 function showDropPin( e) {
+  //console.log("showPin");
   if( null == dropMarker) {
-    //console.log("showDropPin:new");
     dropMarker = L.marker( map.mouseEventToLatLng(e));
+    // using a self defined icon will provide continous dragleave events hiding
+    // the icon in leaflet 1.2. hence function was deactivated
+    //dropMarker.setIcon( NewImgMarkerIcon);
     dropMarker.setOpacity(0.7);
   }
   else {
-    //console.log("showDropPin:typ");
     dropMarker.setLatLng( map.mouseEventToLatLng(e));
   }
 
   if( false === map.hasLayer(dropMarker)) {
     dropMarker.addTo(map);
-    //dropMarker.setOpacity(80);
   }
 }
 
 function hideDropPin(e) {
   if( dropMarker) {
-    //console.log("hideDropPin");
+    // console.log("hideDropPin");
     dropMarker.remove();
   }
 }
