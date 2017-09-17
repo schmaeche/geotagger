@@ -408,4 +408,6 @@ function hideDropPin(e) {
     // console.log("hideDropPin");
     dropMarker.remove();
   }
+
+  return map.mouseEventToLatLng(e);
 }

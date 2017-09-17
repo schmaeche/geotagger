@@ -6,7 +6,6 @@
 /******************************************************************************
 Constants and helper functions
 ******************************************************************************/
-var gImageDrag = false;
 
 var Image = function( filename, url, date, lat, lng){
   this.filename = filename;
@@ -164,12 +163,28 @@ function updateGeoLocations() {
   }
 }
 
+// adds a marker on map and updates tooltip data
+function setImageGeoLocation( node, lat, lng) {
+  // removeImages( true);
+  var date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date).getTime();
+  var image = new Image();
+  image.filename = node.getElementsByClassName("img_filename")[0].innerHTML; // filename
+  image.url = node.getElementsByClassName("c_img_thumb")[0].src;             // url
+  image.date = date;                                                         // date
+  image.lat = lat;
+  image.lng = lng;
+  var tooltip = getMapTooltip( image);
+  addImgToMap( image.lat, image.lng, tooltip, true);
+}
+
 /******************************************************************************
 Map dragging functions
 ******************************************************************************/
 function handleImgDragStart(e) {
+  var imgElem = e.currentTarget.parentNode;
+  e.dataTransfer.setData('text/html', imgElem.getElementsByClassName("img_filename")[0].innerHTML);
   e.dataTransfer.setDragImage( e.currentTarget, 100, 100);
-  var tooltip = e.currentTarget.parentNode.getElementsByClassName("c_img_tooltip")[0];
+  var tooltip = imgElem.getElementsByClassName("c_img_tooltip")[0];
   tooltip.style.visibility = "hidden";
 }
 
@@ -183,25 +198,24 @@ function showDragPin(e) {
   if(e.preventDefault) {
     e.preventDefault();
   }
-
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
   showDropPin(e);
 }
 
+
 function hideDragPin(e) {
   // console.log("hideDragPin");
   if(e.preventDefault) {
     e.preventDefault();
   }
-
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
-
   hideDropPin(e);
 }
+
 
 function updateDragPin(e) {
   // console.log("show");
@@ -214,13 +228,25 @@ function updateDragPin(e) {
   showDropPin(e);
 }
 
+
 function dropDragPin(e) {
   // console.log("dropDragPin");
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
 
-  hideDropPin(e);
+  var latlng = hideDropPin(e);
+  if( latlng) {
+    var file = e.dataTransfer.getData('text/html');
+    var elems = document.getElementsByClassName("img_filename");
+    for (var i = 0; i < elems.length; i++) {
+      if( elems[i].innerHTML == file) {
+        setImageGeoLocation( elems[i].parentNode.parentNode, latlng.lat, latlng.lng);
+        break;
+      }
+    }
+
+  }
 }
 
 /******************************************************************************
