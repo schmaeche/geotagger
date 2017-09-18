@@ -23,7 +23,7 @@ function pad( n, width=2, z=0) {
 }
 
 function initialize() {
-  initMap();
+  GTmap.initMap();
   getNextImage();
 }
 
@@ -55,10 +55,16 @@ function getMapTooltip( image) {
 
 function getImageFromElement(node, geoLoc) {
   var image = new Image();
+  // set filename (mandatory element)
   image.filename = node.getElementsByClassName("img_filename")[0].innerHTML;
+  // set url (mandatory element)
   image.url = node.getElementsByClassName("c_img_thumb")[0].src;
-  image.date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date);
-
+  // set date (optional element)
+  var dateElem = node.getElementsByClassName("img_createdate");
+  if( dateElem.length) {
+    image.date = new Date( dateElem[0].dataset.date);
+  }
+  // set latitude and longitude (optional elements)
   switch (geoLoc) {
     case GEO_LOC_ORIGINAL:
       var latElem = node.getElementsByClassName("img_lat");
@@ -89,70 +95,73 @@ Map interaction functions
 ******************************************************************************/
 
 // displays either a marker for original geotag or a marker for retrieved geo
-// coordinates from a gpx file on map. Pictures not matching on gpx will be
+// coordinates from a gpx file on map. Pictures not matching on any gpx will be
 // automatically being removed from map
-function showImageOnMap( node, geoTaggedOnly = false) {
+function showImageOnMap( node, geoLoc) {
 
-  if( false === geoTaggedOnly ) {
+  if( geoLoc & GEO_LOC_ORIGINAL ) {
     var image = getImageFromElement(node, GEO_LOC_ORIGINAL);
     if( image.lat && image.lng) {
       // add image marker to map
-      addImgToMap( image, getMapTooltip(image), false);
+      GTmap.addImgToMap( image, getMapTooltip(image), false);
       // show pin icon on image when lat and lng are set for image
       var pinElem = node.getElementsByClassName("c_img_pin")[0];
       pinElem.className = pinElem.className.replace('c_disabled', '');
     }
   }
 
-  // get image url, date and filename from each element
-  var image = getImageFromElement(node, GEO_LOC_NONE);
-  
-  var date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date).getTime();
-  var timeOffsetSec = parseInt( document.getElementById( "id_range_time_out").getAttribute("value"));
-  image.date = new Date( date + timeOffsetSec * 1000);
+  if( geoLoc & GEO_LOC_NEW) {
+    // get image url, date and filename from each element
+    var image = getImageFromElement(node, GEO_LOC_NONE);
 
-  // check if element is on map and add a marker
-  var latlng = getGeoLocation( image);
-  if( latlng ) {
-    // update tooltip data
-    image.lat = latlng.lat;
-    image.lng = latlng.lng;
-    var tooltip = getMapTooltip( image);
-    updateImgOnMap(image, tooltip);
-    // show pin icon on image when lat and lng are set for image
-    var pinElem = node.getElementsByClassName("c_img_pin_tagged")[0];
-    pinElem.className = pinElem.className.replace('c_disabled', '');
-    var tooltip = node.getElementsByClassName("c_img_tooltip")[0];
+    var date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date).getTime();
+    var timeOffsetSec = parseInt( document.getElementById( "id_range_time_out").getAttribute("value"));
+    image.date = new Date( date + timeOffsetSec * 1000);
 
-    var latElems = node.getElementsByClassName("img_new_lat");
-    if(latElems.length) {
-      latElems[0].innerHTML = "New latitude: " + latlng.lat.toFixed(6);
+    // check if element is on map and add a marker
+    var latlng = GTmap.getGeoLocation( image);
+    if( latlng ) {
+      // update tooltip data
+      image.lat = latlng.lat;
+      image.lng = latlng.lng;
+      var tooltip = getMapTooltip( image);
+      GTmap.updateImgOnMap(image, tooltip);
+      // show pin icon on image when lat and lng are set for image
+      var pinElem = node.getElementsByClassName("c_img_pin_tagged")[0];
+      pinElem.className = pinElem.className.replace('c_disabled', '');
+      var tooltip = node.getElementsByClassName("c_img_tooltip")[0];
+
+      var latElems = node.getElementsByClassName("img_new_lat");
+      if(latElems.length) {
+        latElems[0].innerHTML = "New latitude: " + latlng.lat.toFixed(6);
+      }
+      else {
+        var newElem = document.createElement('div');
+        newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lat');
+        newElem.setAttribute('data-lat', latlng.lat);
+        newElem.innerHTML = "New latitude: " + latlng.lat.toFixed(6);
+        tooltip.appendChild(newElem);
+      }
+
+      var lngElems = node.getElementsByClassName("img_new_lng");
+      if(lngElems.length) {
+        lngElems[0].innerHTML = "New longitude: " + latlng.lng.toFixed(6);
+      }
+      else {
+        var newElem = document.createElement('div');
+        newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lng');
+        newElem.setAttribute('data-lng', latlng.lng);
+        newElem.innerHTML = "New longitude: " + latlng.lng.toFixed(6);
+        tooltip.appendChild(newElem);
+      }
+      //console.log('actionhandler.js:updateGeoLocations was here');
+      var tagBtn = document.getElementById("id_geotag_btn");
+      tagBtn.classList.remove('c_disabled');
     }
     else {
-      var newElem = document.createElement('div');
-      newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lat');
-      newElem.setAttribute('data-lat', latlng.lat);
-      newElem.innerHTML = "New latitude: " + latlng.lat.toFixed(6);
-      tooltip.appendChild(newElem);
+      // @TODO check if image was tagged manually or automatically and remove only when latter was true
+      removeImage(node, GEO_LOC_NEW);
     }
-
-    var lngElems = node.getElementsByClassName("img_new_lng");
-    if(lngElems.length) {
-      lngElems[0].innerHTML = "New longitude: " + latlng.lng.toFixed(6);
-    }
-    else {
-      var newElem = document.createElement('div');
-      newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lng');
-      newElem.setAttribute('data-lng', latlng.lng);
-      newElem.innerHTML = "New longitude: " + latlng.lng.toFixed(6);
-      tooltip.appendChild(newElem);
-    }
-    //console.log('actionhandler.js:updateGeoLocations was here');
-    var tagBtn = document.getElementById("id_geotag_btn");
-    tagBtn.classList.remove('c_disabled');
-  }
-  else {
-    removeImage(node, GEO_LOC_NEW);
   }
 }
 
@@ -161,9 +170,13 @@ function initializeImagesOnMap() {
   // get images and their original geolocation if available
   var imgElems = document.getElementsByClassName("c_img_elem");
   for (var i = 0; i < imgElems.length; i++) {
-    showImageOnMap( imgElems[i], false);
+    // check if date element is available, only valid elements will be shown than
+    var dateElem = imgElems[i].getElementsByClassName("img_createdate");
+    if( dateElem.length) {
+      showImageOnMap( imgElems[i], GEO_LOC_ORIGINAL);
+    }
   }
-  showWholeImages();
+  GTmap.showWholeImages( LAYER_GEO_ORIG);
 }
 
 function removeImage( node, geoLoc) {
@@ -182,7 +195,7 @@ function removeImage( node, geoLoc) {
         ttipElem.removeChild(lngElem[0]);
       }
       var image = getImageFromElement(node, GEO_LOC_NEW);
-      removeImageMarker(image, LAYER_GEO_TAG);
+      GTmap.removeImageMarker(image, LAYER_GEO_TAG);
     }
   }
   // hide pin icon
@@ -192,9 +205,10 @@ function removeImage( node, geoLoc) {
   }
 }
 
-function removeImages( geoTaggedOnly = false) {
-  var geoLoc = (geoTaggedOnly) ? GEO_LOC_NEW : (GEO_LOC_NEW | GEO_LOC_ORIGINAL);
-  removeImg( geoTaggedOnly);
+function removeImages( geoLoc) {
+  var layer = (geoLoc & GEO_LOC_ORIGINAL) ? LAYER_GEO_ORIG : LAYER_NONE;
+  layer = (geoLoc & GEO_LOC_NEW) ? layer | LAYER_GEO_TAG : layer;
+  GTmap.removeAllImages( layer);
 
   var elems = document.getElementsByClassName("c_img_elem");
   for (var i = 0; i < elems.length; i++) {
@@ -211,7 +225,11 @@ function updateGeoLocations() {
   // get images
   var imgElems = document.getElementsByClassName("c_img_elem");
   for (var i = 0; i < imgElems.length; i++) {
-    showImageOnMap( imgElems[i], true);
+    // check if date element is available, only valid elements will be shown than
+    var dateElem = imgElems[i].getElementsByClassName("img_createdate");
+    if( dateElem.length) {
+      showImageOnMap( imgElems[i], GEO_LOC_NEW);
+    }
   }
 }
 
@@ -222,7 +240,7 @@ function setImageGeoLocation( node, lat, lng) {
   image.lat = lat;
   image.lng = lng;
   var tooltip = getMapTooltip( image);
-  updateImgOnMap( image, tooltip);
+  GTmap.updateImgOnMap( image, tooltip);
 }
 
 /******************************************************************************
@@ -249,7 +267,7 @@ function showDragPin(e) {
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
-  showDropPin(e);
+  GTmap.showDropPin(e);
 }
 
 
@@ -261,7 +279,7 @@ function hideDragPin(e) {
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
-  hideDropPin(e);
+  GTmap.hideDropPin(e);
 }
 
 
@@ -273,7 +291,7 @@ function updateDragPin(e) {
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
-  showDropPin(e);
+  GTmap.showDropPin(e);
 }
 
 
@@ -283,7 +301,7 @@ function dropDragPin(e) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
 
-  var latlng = hideDropPin(e);
+  var latlng = GTmap.hideDropPin(e);
   if( latlng) {
     var file = e.dataTransfer.getData('text/html');
     var elems = document.getElementsByClassName("img_filename");
@@ -342,7 +360,7 @@ function retrieveImage( node) {
     this.removeAttribute("data-src");
   };
   var filename = node.getAttribute("alt");
-  sendGetRequest( "src/updateimages.php?file=" + filename, updateImageElement, filename)
+  GTajax.sendGetRequest( "src/updateimages.php?file=" + filename, updateImageElement, filename)
 }
 
 function getNextImage() {
@@ -362,10 +380,10 @@ function updateImageElement( request, file) {
     // there should be only one element for each file hence we break after triggering next image request
     if( loading.length && loading[0].alt === file) {
       images[i].innerHTML = request.responseText;
-      showImageOnMap( images[i], false);
+      showImageOnMap( images[i], GEO_LOC_ORIGINAL | GEO_LOC_NEW);
       if( false === getNextImage()) {
         // zoom to all elements only once after all images have been loaded
-        showWholeImages();
+        GTmap.showWholeImages(LAYER_GEO_ORIG);
       }
       break;
     }
@@ -403,7 +421,7 @@ function setGeotag( event) {
 
   // send ajax request
   if( data.length) {
-    sendPostRequest("src/tagimage.php", updateImageData, JSON.stringify(data));
+    GTajax.sendPostRequest("src/tagimage.php", updateImageData, JSON.stringify(data));
   }
   else {
     console.warn("actionhandler:setGeotag() make sure that button is only shown when images can be tagged!");

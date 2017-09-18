@@ -43,9 +43,9 @@ function handleGPXFiles(evt) {
           var btn = document.getElementById('id_gpx_btn');
           btn.className = btn.className.replace('c_disabled', '');
           // draw track in map
-          drawGPXTrack(gpxDoc);
+          GTmap.drawGPXTrack(gpxDoc);
           // zoom to track on map
-          showWholeTrack();
+          GTmap.showWholeTrack();
           // find matching images on track and set location
           updateGeoLocations();
         }
@@ -134,7 +134,7 @@ function handleImgDragStart(evt) {
 }
 
 function removeGPX(e) {
-  removeGPXTracks();
+  GTmap.removeGPXTracks();
   document.getElementById('id_gpx_list').innerHTML = '';
   document.getElementById('id_gpx_btn').className += " c_disabled";
   // @TODO remove uploaded files as well

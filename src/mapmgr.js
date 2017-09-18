@@ -8,6 +8,7 @@
 //###############################
 //### Global variables        ###
 //###############################
+const LAYER_NONE     = 0x00;
 const LAYER_GEO_TAG  = 0x01;
 const LAYER_GEO_ORIG = 0x02;
 const LAYER_DROP     = 0x04;
@@ -192,15 +193,18 @@ var NewImgMarkerIcon = L.icon({
   popupAnchor: [0, -23]
 });
 
+
+var GTmap = {};
+
 //###############################
 //### Geolocation handling    ###
 //###############################
 
-function setCurPos(position) {
+GTmap._setCurPos = function(position) {
   map.setView([position.coords.latitude, position.coords.longitude], 16);
 }
 
-function onError(error) {
+GTmap._onError = function(error) {
   var txt;
   switch (error.code) {
     case error.PERMISSION_DENIED:
@@ -218,17 +222,17 @@ function onError(error) {
   console.warn(txt);
 }
 
-function setCurrentPosition(event) {
+GTmap._setCurrentPosition = function(event) {
   if( event) {
     event.preventDefault();
     event.stopPropagation();
   }
   if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition( setCurPos , onError);
+    navigator.geolocation.getCurrentPosition( this._setCurPos , this._onError);
   }
 }
 
-function updateCurPos(pos) {
+GTmap._updateCurPos = function(pos) {
   if( currentPosition) {
     // console.warn("latest pos " + pos.coords.latitude + ", " + pos.coords.longitude);
     currentPosition.setLatLng([pos.coords.latitude, pos.coords.longitude]);
@@ -242,7 +246,7 @@ function updateCurPos(pos) {
 //### Map initialization      ###
 //###############################
 
-function initMap() {
+GTmap.initMap = function() {
   // map init
   var mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2NobWFlY2hlIiwiYSI6ImNqNTVmc3NvbzBvenUzM29hYW9jZXp0bG8ifQ.f9LIzhedtt9K8YwfpTcZdQ';
   attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>';
@@ -262,40 +266,29 @@ function initMap() {
 
   map = L.map( 'id_map', {layers: outdoorsLayer} );
   map.setView( [49.83488, 9.15214], 16);
-  L.control.layers( mapBaseLayers).addTo(map);
+  L.control.layers( mapBaseLayers).addTo( map);
 
   if(navigator.geolocation) {
-    navigator.geolocation.watchPosition( updateCurPos, onError);
+    navigator.geolocation.watchPosition( this._updateCurPos, this._onError);
   }
-  setCurrentPosition(null);
+  this._setCurrentPosition(null);
 
-  trackLayer = L.featureGroup().addTo(map);
-  imageLayer = L.featureGroup().addTo(map);
-  newImageLayer = L.featureGroup().addTo(map);
+  trackLayer = L.featureGroup().addTo( map);
+  imageLayer = L.featureGroup().addTo( map);
+  newImageLayer = L.featureGroup().addTo( map);
 }
-
-
-
-function onMapClick(event) {
-  var popup = L.popup();
-  popup
-      .setLatLng(event.latlng)
-      .setContent("You clicked the map at " + event.latlng.toString())
-      .openOn(map);
-}
-
 
 //###############################
 //### GPX track handling      ###
 //###############################
 
-function removeGPXTracks() {
+GTmap.removeGPXTracks = function() {
   if(trackLayer) {
     trackLayer.clearLayers();
   }
 }
 
-function drawGPXTrack( gpxDoc) {
+GTmap.drawGPXTrack = function( gpxDoc) {
   var track;
 
   var name = gpxDoc.getElementsByTagName("name")[0].innerHTML;
@@ -338,7 +331,7 @@ function drawGPXTrack( gpxDoc) {
   trackLayer.addLayer(track);
 }
 
-function showWholeTrack() {
+GTmap.showWholeTrack = function() {
   if( trackLayer) {
     map.fitBounds( trackLayer.getBounds());
   }
@@ -348,7 +341,7 @@ function showWholeTrack() {
 //### Image marker handling   ###
 //###############################
 
-function removeImageMarker( image, layer) {
+GTmap.removeImageMarker = function( image, layer) {
   var mapLayer;
   switch (layer) {
     case LAYER_GEO_ORIG:
@@ -358,7 +351,7 @@ function removeImageMarker( image, layer) {
       mapLayer = newImageLayer;
       break;
     default:
-      console.warn("mapmgr:removeImageMarker wrong layer specified");
+      console.warn("GTmap:removeImageMarker wrong layer specified");
       return;
   }
 
@@ -370,21 +363,33 @@ function removeImageMarker( image, layer) {
   }
 }
 
-function removeImg( isNewGeoTag = false) {
-  if( !isNewGeoTag) {
-    imageLayer.clearLayers();
+GTmap.removeAllImages = function(layer) {
+  switch (layer) {
+    case LAYER_GEO_ORIG:
+      imageLayer.clearLayers();
+      break;
+    case LAYER_GEO_TAG:
+      newImageLayer.clearLayers();
+      break;
+    default:
+      break;
   }
-
-  newImageLayer.clearLayers();
 }
 
-function showWholeImages() {
-  if( imageLayer) {
-    map.fitBounds( imageLayer.getBounds());
+GTmap.showWholeImages = function(layer) {
+  switch (layer) {
+    case LAYER_GEO_ORIG:
+      map.fitBounds( imageLayer.getBounds());
+      break;
+    case LAYER_GEO_TAG:
+      map.fitBounds( newImageLayer.getBounds());
+      break;
+    default:
+      break;
   }
 }
 
-function updateImgOnMap( image, tooltip='') {
+GTmap.updateImgOnMap = function( image, tooltip='') {
   // check if image already exist on map
   var layers = newImageLayer.getLayers();
   for (var i = 0; i < layers.length; i++) {
@@ -402,7 +407,7 @@ function updateImgOnMap( image, tooltip='') {
   newImageLayer.addLayer(marker);
 }
 
-function addImgToMap( image, tooltip = '', isNew = false) {
+GTmap.addImgToMap = function( image, tooltip = '', isNew = false) {
   var marker = L.marker( [image.lat,image.lng], {icon: (isNew) ? NewImgMarkerIcon : ImgMarkerIcon, riseOnHover: true, alt: image.filename});
   marker.bindTooltip( tooltip, {offset: [10,-10], direction: "right", className: "c_track_tooltip"});
   ((isNew) ? newImageLayer : imageLayer).addLayer(marker);
@@ -412,7 +417,7 @@ function addImgToMap( image, tooltip = '', isNew = false) {
 //### Geo tagging handling    ###
 //###############################
 
-function getGeoLocation( image) {
+GTmap.getGeoLocation = function(image) {
   var latlng;
   var layer = trackLayer.getLayers();
   for (var i = 0; i < layer.length; i++) {
@@ -421,7 +426,6 @@ function getGeoLocation( image) {
       return latlng;
     }
   }
-
   return null;
 }
 
@@ -429,7 +433,7 @@ function getGeoLocation( image) {
 //### drag & drop handling    ###
 //###############################
 
-function showDropPin( e) {
+GTmap.showDropPin = function(e) {
   //console.log("showPin");
   if( null == dropMarker) {
     dropMarker = L.marker( map.mouseEventToLatLng(e));
@@ -447,9 +451,9 @@ function showDropPin( e) {
   }
 }
 
-function hideDropPin(e) {
+GTmap.hideDropPin = function(e) {
   if( dropMarker) {
-    // console.log("hideDropPin");
+    // console.log("GTmap.hideDropPin");
     dropMarker.remove();
   }
 
