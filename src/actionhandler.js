@@ -127,8 +127,7 @@ function showImageOnMap( node, geoLoc) {
       var tooltip = getMapTooltip( image);
       GTmap.updateImgOnMap(image, tooltip);
       updateImageTooltipLatLng( node, image);
-      var tagBtn = document.getElementById("id_geotag_btn");
-      tagBtn.classList.remove('c_disabled');
+      updateGeoTagButton();
     }
     else {
       // @TODO check if image was tagged manually or automatically and remove only when latter was true
@@ -168,6 +167,7 @@ function removeImage( node, geoLoc) {
       }
       var image = getImageFromElement(node, GEO_LOC_NEW);
       GTmap.removeImageMarker(image, LAYER_GEO_TAG);
+      updateGeoTagButton();
     }
   }
   // hide pin icon
@@ -187,8 +187,7 @@ function removeImages( geoLoc) {
     removeImage( elems[i], geoLoc);
   }
 
-  var tagBtn = document.getElementById("id_geotag_btn");
-  tagBtn.classList.add('c_disabled');
+  updateGeoTagButton();
 }
 
 // checks for each image if it is located on one of the GPX tracks, adds a
@@ -214,8 +213,7 @@ function setImageGeoLocation( node, lat, lng) {
   var tooltip = getMapTooltip( image);
   GTmap.updateImgOnMap( image, tooltip);
   updateImageTooltipLatLng( node, image);
-  var tagBtn = document.getElementById("id_geotag_btn");
-  tagBtn.classList.remove('c_disabled');
+  updateGeoTagButton();
 }
 
 /******************************************************************************
@@ -452,4 +450,33 @@ function updateImageTooltipLatLng( node, image) {
     tooltip.appendChild(newElem);
   }
   //console.log('actionhandler.js:updateGeoLocations was here');
+}
+
+function updateGeoTagButton() {
+  var isElementTagged = false;
+  var pinElems = document.getElementsByClassName("c_img_pin_tagged");
+  for (var i = 0; i < pinElems.length; i++) {
+    var isDisabled = false;
+    for (var j = 0; j < pinElems[i].classList.length; j++) {
+      if( pinElems[i].classList[j] === "c_disabled"){
+        isDisabled = true;
+        break;
+      }
+    }
+    if( !isDisabled) {
+      isElementTagged = true;
+      break;
+    }
+  }
+
+  var button = document.getElementById("id_geotag_btn");
+  if( isElementTagged) {
+    // show geotag button
+    button.innerHTML = "Geotag";
+    button.classList.remove("c_disabled");
+  }
+  else {
+    // hide geotag button
+    button.classList.add('c_disabled');
+  }
 }
