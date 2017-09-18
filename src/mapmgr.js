@@ -8,6 +8,10 @@
 //###############################
 //### Global variables        ###
 //###############################
+const LAYER_GEO_TAG  = 0x01;
+const LAYER_GEO_ORIG = 0x02;
+const LAYER_DROP     = 0x04;
+const LAYER_GPX      = 0x08;
 
 var map;
 var currentPosition;
@@ -344,6 +348,28 @@ function showWholeTrack() {
 //### Image marker handling   ###
 //###############################
 
+function removeImageMarker( image, layer) {
+  var mapLayer;
+  switch (layer) {
+    case LAYER_GEO_ORIG:
+      mapLayer = imageLayer;
+      break;
+    case LAYER_GEO_TAG:
+      mapLayer = newImageLayer;
+      break;
+    default:
+      console.warn("mapmgr:removeImageMarker wrong layer specified");
+      return;
+  }
+
+  var marker = mapLayer.getLayers();
+  for (var i = 0; i < marker.length; i++) {
+    if( marker[i].options.alt === image.filename) {
+      marker[i].removeFrom( mapLayer);
+    }
+  }
+}
+
 function removeImg( isNewGeoTag = false) {
   if( !isNewGeoTag) {
     imageLayer.clearLayers();
@@ -358,8 +384,26 @@ function showWholeImages() {
   }
 }
 
-function addImgToMap( lat, lng, tooltip = '', isNew = false) {
-  var marker = L.marker( [lat,lng], {icon: (isNew) ? NewImgMarkerIcon : ImgMarkerIcon, riseOnHover: true});
+function updateImgOnMap( image, tooltip='') {
+  // check if image already exist on map
+  var layers = newImageLayer.getLayers();
+  for (var i = 0; i < layers.length; i++) {
+    if( layers[i].options.alt === image.filename) {
+      //console.log("found image marker on map");
+      // update to new position
+      layers[i].setLatLng([image.lat,image.lng]);
+      layers[i].setTooltipContent(tooltip);
+      return;
+    }
+  }
+  // create new marker if not existent
+  var marker = L.marker( [image.lat,image.lng], {icon: NewImgMarkerIcon, riseOnHover: true, alt: image.filename});
+  marker.bindTooltip( tooltip, {offset: [10,-10], direction: "right", className: "c_track_tooltip"});
+  newImageLayer.addLayer(marker);
+}
+
+function addImgToMap( image, tooltip = '', isNew = false) {
+  var marker = L.marker( [image.lat,image.lng], {icon: (isNew) ? NewImgMarkerIcon : ImgMarkerIcon, riseOnHover: true, alt: image.filename});
   marker.bindTooltip( tooltip, {offset: [10,-10], direction: "right", className: "c_track_tooltip"});
   ((isNew) ? newImageLayer : imageLayer).addLayer(marker);
 }
