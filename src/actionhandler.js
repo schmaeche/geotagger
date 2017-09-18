@@ -10,7 +10,7 @@ const GEO_LOC_NONE     = 0x00;
 const GEO_LOC_ORIGINAL = 0x01;
 const GEO_LOC_NEW      = 0x02;
 
-var Image = function( filename, url, date, lat, lng){
+var Image = function( filename, url, date, lat = .0, lng = .0){
   this.filename = filename;
   this.url = url;
   this.date = date;
@@ -94,17 +94,8 @@ Map interaction functions
 function showImageOnMap( node, geoTaggedOnly = false) {
 
   if( false === geoTaggedOnly ) {
-    var latElem = node.getElementsByClassName("img_lat");
-    var lngElem = node.getElementsByClassName("img_lng");
-    if( latElem.length && lngElem.length) {
-      // extract image and tooltip from img_list and add to map tooltip
-      var image = new Image();
-      image.filename = node.getElementsByClassName("img_filename")[0].innerHTML;
-      image.url = node.getElementsByClassName("c_img_thumb")[0].src;
-      image.date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date);
-      image.lat = parseFloat( latElem[0].dataset.lat);
-      image.lng = parseFloat( lngElem[0].dataset.lng);
-
+    var image = getImageFromElement(node, GEO_LOC_ORIGINAL);
+    if( image.lat && image.lng) {
       // add image marker to map
       addImgToMap( image, getMapTooltip(image), false);
       // show pin icon on image when lat and lng are set for image
@@ -114,12 +105,11 @@ function showImageOnMap( node, geoTaggedOnly = false) {
   }
 
   // get image url, date and filename from each element
+  var image = getImageFromElement(node, GEO_LOC_NONE);
+  
   var date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date).getTime();
   var timeOffsetSec = parseInt( document.getElementById( "id_range_time_out").getAttribute("value"));
-  var image = new Image();
-  image.filename = node.getElementsByClassName("img_filename")[0].innerHTML; // filename
-  image.url = node.getElementsByClassName("c_img_thumb")[0].src;             // url
-  image.date = new Date( date + timeOffsetSec * 1000);                       // date
+  image.date = new Date( date + timeOffsetSec * 1000);
 
   // check if element is on map and add a marker
   var latlng = getGeoLocation( image);
@@ -203,7 +193,7 @@ function removeImage( node, geoLoc) {
 }
 
 function removeImages( geoTaggedOnly = false) {
-  var geoLoc = (geoTaggedOnly) ? GEO_LOC_NEW : (GEO_LOC_NEW & GEO_LOC_ORIGINAL);
+  var geoLoc = (geoTaggedOnly) ? GEO_LOC_NEW : (GEO_LOC_NEW | GEO_LOC_ORIGINAL);
   removeImg( geoTaggedOnly);
 
   var elems = document.getElementsByClassName("c_img_elem");
@@ -218,7 +208,6 @@ function removeImages( geoTaggedOnly = false) {
 // checks for each image if it is located on one of the GPX tracks, adds a
 // marker on map and updates tooltip data
 function updateGeoLocations() {
-  //removeImages( true);
   // get images
   var imgElems = document.getElementsByClassName("c_img_elem");
   for (var i = 0; i < imgElems.length; i++) {
@@ -228,14 +217,8 @@ function updateGeoLocations() {
 
 // adds a marker on map and updates tooltip data
 function setImageGeoLocation( node, lat, lng) {
-  // remove image from map
-
   // add new marker and tooltip to map
-  var date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date).getTime();
-  var image = new Image();
-  image.filename = node.getElementsByClassName("img_filename")[0].innerHTML; // filename
-  image.url = node.getElementsByClassName("c_img_thumb")[0].src;             // url
-  image.date = date;                                                         // date
+  var image = getImageFromElement(node, GEO_LOC_NONE);
   image.lat = lat;
   image.lng = lng;
   var tooltip = getMapTooltip( image);
