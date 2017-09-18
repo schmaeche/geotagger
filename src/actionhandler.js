@@ -126,35 +126,7 @@ function showImageOnMap( node, geoLoc) {
       image.lng = latlng.lng;
       var tooltip = getMapTooltip( image);
       GTmap.updateImgOnMap(image, tooltip);
-      // show pin icon on image when lat and lng are set for image
-      var pinElem = node.getElementsByClassName("c_img_pin_tagged")[0];
-      pinElem.className = pinElem.className.replace('c_disabled', '');
-      var tooltip = node.getElementsByClassName("c_img_tooltip")[0];
-
-      var latElems = node.getElementsByClassName("img_new_lat");
-      if(latElems.length) {
-        latElems[0].innerHTML = "New latitude: " + latlng.lat.toFixed(6);
-      }
-      else {
-        var newElem = document.createElement('div');
-        newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lat');
-        newElem.setAttribute('data-lat', latlng.lat);
-        newElem.innerHTML = "New latitude: " + latlng.lat.toFixed(6);
-        tooltip.appendChild(newElem);
-      }
-
-      var lngElems = node.getElementsByClassName("img_new_lng");
-      if(lngElems.length) {
-        lngElems[0].innerHTML = "New longitude: " + latlng.lng.toFixed(6);
-      }
-      else {
-        var newElem = document.createElement('div');
-        newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lng');
-        newElem.setAttribute('data-lng', latlng.lng);
-        newElem.innerHTML = "New longitude: " + latlng.lng.toFixed(6);
-        tooltip.appendChild(newElem);
-      }
-      //console.log('actionhandler.js:updateGeoLocations was here');
+      updateImageTooltipLatLng( node, image);
       var tagBtn = document.getElementById("id_geotag_btn");
       tagBtn.classList.remove('c_disabled');
     }
@@ -241,6 +213,9 @@ function setImageGeoLocation( node, lat, lng) {
   image.lng = lng;
   var tooltip = getMapTooltip( image);
   GTmap.updateImgOnMap( image, tooltip);
+  updateImageTooltipLatLng( node, image);
+  var tagBtn = document.getElementById("id_geotag_btn");
+  tagBtn.classList.remove('c_disabled');
 }
 
 /******************************************************************************
@@ -442,4 +417,39 @@ function updateImageData( request) {
   var button = document.getElementById("id_geotag_btn");
   button.removeAttribute("disabled");
   button.innerHTML = "Geotag";
+}
+
+/******************************************************************************
+DOM interaction functions
+******************************************************************************/
+function updateImageTooltipLatLng( node, image) {
+  // show pin icon on image when lat and lng are set for image
+  var pinElem = node.getElementsByClassName("c_img_pin_tagged")[0];
+  pinElem.className = pinElem.className.replace('c_disabled', '');
+  var tooltip = node.getElementsByClassName("c_img_tooltip")[0];
+
+  var latElems = node.getElementsByClassName("img_new_lat");
+  if(latElems.length) {
+    latElems[0].innerHTML = "New latitude: " + image.lat.toFixed(6);
+  }
+  else {
+    var newElem = document.createElement('div');
+    newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lat');
+    newElem.setAttribute('data-lat', image.lat);
+    newElem.innerHTML = "New latitude: " + image.lat.toFixed(6);
+    tooltip.appendChild(newElem);
+  }
+
+  var lngElems = node.getElementsByClassName("img_new_lng");
+  if(lngElems.length) {
+    lngElems[0].innerHTML = "New longitude: " + image.lng.toFixed(6);
+  }
+  else {
+    var newElem = document.createElement('div');
+    newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lng');
+    newElem.setAttribute('data-lng', image.lng);
+    newElem.innerHTML = "New longitude: " + image.lng.toFixed(6);
+    tooltip.appendChild(newElem);
+  }
+  //console.log('actionhandler.js:updateGeoLocations was here');
 }
