@@ -15,7 +15,7 @@
     if ($dh = opendir($dir)){
       while (($file = readdir($dh)) !== false){
         $fileinfo = pathinfo( $file);
-        if ($file == '.' || $file == '..' || !in_array( strtolower( $fileinfo['extension']), $fileExtensions) ) {
+        if ($file == '.' || $file == '..' || !array_key_exists('extension', $fileinfo) || !in_array( strtolower( $fileinfo['extension']), $fileExtensions) ) {
           continue;
         }
 
