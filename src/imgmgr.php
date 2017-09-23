@@ -22,7 +22,7 @@
         // return loading icon for each element, each real element will than be get by ajax request
         echo '<div class="c_img_elem">';
         echo '<img data-src="img/Loading_icon.gif" class="c_img_thumb img_loading" alt="' . $file . '" draggable="false">';
-        echo '<div class="c_img_tooltip">';
+        echo '<div class="c_img_tooltip c_disabled">';
         echo '<div class="c_img_tooltip_elem img_filename">' . $file . '</div>';
         echo '</div>';
         echo '</div>';

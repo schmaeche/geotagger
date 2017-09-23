@@ -101,23 +101,23 @@ h1 {
   white-space: nowrap;
 }
 
-.c_img_thumb {
-  margin: 1px;
-  width: 100px;
-  height: 75px;
+.c_img_elem {
+  position: relative;
+  display: inline-grid;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 1px 0px 2px;
 }
 
-.c_img_thumb[data-src] {
+.c_img_elem .c_img_thumb {
+  width: 150px;
+  height: 112px;
+}
+
+.c_img_elem .c_img_thumb[data-src] {
   opacity: 0;
   width: 0px;
   height: 0px;
-}
-
-.c_img_elem {
-  position: relative;
-  display: inline-block;
-  font-size: 12px;
-  font-weight: bold;
 }
 
 .c_img_elem .c_img_pin {
@@ -138,34 +138,7 @@ h1 {
 }
 
 .c_img_elem .c_img_tooltip {
-  visibility: hidden;
-  width: 150px;
-  background-color: #ccc;
-  padding: 5px;
-  border-radius: 6px;
-
-  position: absolute;
-  z-index: 900;
-  bottom: 100%;
-  left: 50%;
-
-  opacity: 0;
-  transition: opacity .5s;
-}
-
-.c_img_elem .c_img_tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #ccc transparent transparent transparent;
-  opacity: 0.9;
-}
-
-.c_img_elem:hover .c_img_tooltip {
-  visibility: visible;
-  opacity: 0.9;
+  margin: 5px 2px 0px 2px;
 }
 
 /*

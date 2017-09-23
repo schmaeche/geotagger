@@ -222,7 +222,7 @@ Map dragging functions
 function handleImgDragStart(e) {
   var imgElem = e.currentTarget.parentNode;
   e.dataTransfer.setData('text/html', imgElem.getElementsByClassName("img_filename")[0].innerHTML);
-  e.dataTransfer.setDragImage( e.currentTarget, 100, 100);
+  e.dataTransfer.setDragImage( e.currentTarget, -20, 125);
   var tooltip = imgElem.getElementsByClassName("c_img_tooltip")[0];
   tooltip.style.visibility = "hidden";
 }
