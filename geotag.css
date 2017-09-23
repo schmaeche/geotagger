@@ -1,11 +1,27 @@
+/*
+** General styles
+*/
+
 * {
   font-family: "Palatino", "Georgia", serif;
   color: #555;
 }
 
-.c_map {
-  height: 400px;
+h1 {
+  font-size: 35px;
+  font-weight: bold;
+  background-color: #ccc;
+  padding: 15px;
+  margin: 10px 0px;
 }
+
+.c_disabled {
+  display: none;
+}
+
+/*
+** file drop elements
+*/
 
 .c_drop_container {
   width: 100%;
@@ -42,20 +58,12 @@
   background-color: #bbb;
 }
 
-.c_img_thumb {
-  margin: 1px;
-  width: 100px;
-  height: 75px;
-}
+/*
+** map styles
+*/
 
-.c_img_thumb[data-src] {
-  opacity: 0;
-  width: 0px;
-  height: 0px;
-}
-
-.c_disabled {
-  display: none;
+.c_map {
+  height: 400px;
 }
 
 .c_track_tooltip {
@@ -84,9 +92,25 @@
 .c_map_marker_tooltip div {
 }
 
+/*
+** uploaded image selection
+*/
+
 .c_img_list {
-  overflow: auto;
+  overflow: scroll;
   white-space: nowrap;
+}
+
+.c_img_thumb {
+  margin: 1px;
+  width: 100px;
+  height: 75px;
+}
+
+.c_img_thumb[data-src] {
+  opacity: 0;
+  width: 0px;
+  height: 0px;
 }
 
 .c_img_elem {
@@ -144,6 +168,10 @@
   opacity: 0.9;
 }
 
+/*
+** time adjust input
+*/
+
 .c_time_input {
   display: block;
 }
@@ -175,6 +203,10 @@
   border-radius: 50%;
 }
 
+/*
+** image download section
+*/
+
 .c_img_download {
   position: relative;
   display: inline-block;
@@ -195,12 +227,4 @@
 .c_img_download a{
   font-size: 12px;
   margin: 10px;
-}
-
-h1 {
-  font-size: 35px;
-  font-weight: bold;
-  background-color: #ccc;
-  padding: 15px;
-  margin: 10px 0px;
 }
