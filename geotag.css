@@ -3,6 +3,10 @@
   color: #555;
 }
 
+.c_map {
+  height: 400px;
+}
+
 .c_drop_container {
   width: 100%;
   text-align: center;
@@ -78,6 +82,11 @@
 }
 
 .c_map_marker_tooltip div {
+}
+
+.c_img_list {
+  overflow: auto;
+  white-space: nowrap;
 }
 
 .c_img_elem {
