@@ -106,12 +106,18 @@ h1 {
   display: inline-grid;
   font-size: 12px;
   font-weight: bold;
-  padding: 2px 1px 0px 2px;
+  padding: 5px 3px 0px 0px;
 }
 
 .c_img_elem .c_img_thumb {
   width: 150px;
   height: 112px;
+  opacity: 0.5;
+}
+
+.c_img_elem .select {
+  box-shadow: 0px 0px 4px 1px #555;
+  opacity: 1.0;
 }
 
 .c_img_elem .c_img_thumb[data-src] {

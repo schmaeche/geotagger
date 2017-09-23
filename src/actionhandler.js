@@ -220,16 +220,13 @@ function setImageGeoLocation( node, lat, lng) {
 Map dragging functions
 ******************************************************************************/
 function handleImgDragStart(e) {
+  e.currentTarget.classList.add("select");
   var imgElem = e.currentTarget.parentNode;
   e.dataTransfer.setData('text/html', imgElem.getElementsByClassName("img_filename")[0].innerHTML);
   e.dataTransfer.setDragImage( e.currentTarget, -20, 125);
-  var tooltip = imgElem.getElementsByClassName("c_img_tooltip")[0];
-  tooltip.style.visibility = "hidden";
 }
 
 function handleImgDragEnd(e) {
-  var tooltip = e.currentTarget.parentNode.getElementsByClassName("c_img_tooltip")[0];
-  tooltip.style.visibility = "";
 }
 
 function showDragPin(e) {
@@ -285,6 +282,22 @@ function dropDragPin(e) {
       }
     }
 
+  }
+}
+
+function toggleImageSelect(e) {
+  if( e.currentTarget.classList.contains("select")) {
+    e.currentTarget.classList.remove("select");
+  }
+  else {
+    if( !e.ctrlKey && !e.metaKey) {
+      var selectElems = document.getElementsByClassName("select");
+      while (selectElems.length) {
+        selectElems[0].classList.remove("select");
+      }
+    }
+
+    e.currentTarget.classList.add("select");
   }
 }
 
