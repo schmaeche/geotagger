@@ -18,10 +18,6 @@
    crossorigin="">
   </script>
   <script src="lib/markercluster/leaflet.markercluster.js"></script>
-  <script src="src/mapmgr.js"></script>
-  <script src="src/filemgr.js"></script>
-  <script src="src/actionhandler.js"></script>
-  <script src="src/ajaxhandler.js"></script>
 </head>
 
 <body onload="initialize()">
@@ -89,5 +85,10 @@
   <div id="id_img_download" class="c_img_download">
     <h2>Download tagged images</h2>
   </div>
+  <script src="src/mapmgr.js"></script>
+  <script src="src/filemgr.js"></script>
+  <script src="./src/imagelist.js"></script>
+  <script src="src/actionhandler.js"></script>
+  <script src="src/ajaxhandler.js"></script>
 </body>
 </html>

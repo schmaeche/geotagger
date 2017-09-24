@@ -55,7 +55,7 @@ if (!$retVal) {
   eval($arrayStr);
 
   // create resulting element
-  echo '<img src="' . $imgfile . '" class="c_img_thumb" alt="' . $_GET['file'] . '" onmousedown="toggleImageSelect(event)" draggable="true" ondragstart="handleImgDragStart(event)" ondragend="handleImgDragEnd(event)">';
+  echo '<img src="' . $imgfile . '" class="c_img_thumb" alt="' . $_GET['file'] . '" onmousedown="GTimageList.toggleImageSelect(event)" draggable="true" ondragstart="GTimageList.handleImgDragStart(event)" ondragend="GTimageList.handleImgDragEnd(event)">';
   echo '<img src="img/Flag1LeftBlack-icon.png" class="c_img_pin c_disabled" draggable="false">';
   echo '<img src="img/Flag1RightGreen-icon.png" class="c_img_pin_tagged c_disabled" draggable="false">';
   echo '<div class="c_img_tooltip">';
