@@ -16,6 +16,9 @@ var Image = function(){
 
 
 var GTimageList = {
+
+  _lastSingleSelected: -1,
+
   /******************************************************************************
    helper functions
   ******************************************************************************/
@@ -51,20 +54,39 @@ var GTimageList = {
   /******************************************************************************
    image interaction functions
   ******************************************************************************/
+  _getTargetIdx: function(node) {
+    return Array.prototype.indexOf.call(node.parentNode.parentNode.children, node.parentNode);
+  },
+
   // toggles selection of image, special keys will be evaluated for multiple select
   toggleImageSelect: function(e) {
     if( e.currentTarget.classList.contains("select")) {
       e.currentTarget.classList.remove("select");
+      this._lastSingleSelected = -1;
     }
     else {
-      if( !e.ctrlKey && !e.metaKey) {
+      if( (!e.ctrlKey && !e.metaKey) || (e.shiftKey && this._lastSingleSelected !== -1)) {
         var selectElems = document.getElementsByClassName("select");
         while (selectElems.length) {
           selectElems[0].classList.remove("select");
         }
       }
 
-      e.currentTarget.classList.add("select");
+      if( e.shiftKey && this._lastSingleSelected !== -1) {
+        var curIdx = this._getTargetIdx(e.currentTarget)
+        var parent = e.currentTarget.parentNode.parentNode;
+        var start = Math.min(this._lastSingleSelected, curIdx);
+        var end = Math.max(this._lastSingleSelected, curIdx);
+        for (var i = start; i <= end; i++) {
+          parent.children[i].getElementsByClassName("c_img_thumb")[0].classList.add("select");
+        }
+      }
+      else {
+        // target will be image element, to get the right index we have to get
+        // whole image element first and than the list element.
+        this._lastSingleSelected = this._getTargetIdx(e.currentTarget);
+        e.currentTarget.classList.add("select");
+      }
     }
   },
 
