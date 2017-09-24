@@ -274,8 +274,8 @@ GTmap.initMap = function() {
   this._setCurrentPosition(null);
 
   trackLayer = L.featureGroup().addTo( map);
-  imageLayer = L.featureGroup().addTo( map);
-  newImageLayer = L.featureGroup().addTo( map);
+  imageLayer = L.markerClusterGroup().addTo( map);
+  newImageLayer = L.markerClusterGroup().addTo( map);
 }
 
 //###############################
@@ -440,7 +440,7 @@ GTmap.showDropPin = function(e) {
     // using a self defined icon will provide continous dragleave events hiding
     // the icon in leaflet 1.2. hence function was deactivated
     //dropMarker.setIcon( NewImgMarkerIcon);
-    dropMarker.setOpacity(0.7);
+    //dropMarker.setOpacity(0.7);
   }
   else {
     dropMarker.setLatLng( map.mouseEventToLatLng(e));

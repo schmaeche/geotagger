@@ -9,12 +9,15 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
    crossorigin=""/>
+  <link rel="stylesheet" href="./lib/markercluster/MarkerCluster.css"/>
+  <link rel="stylesheet" href="./lib/markercluster/MarkerCluster.Default.css"/>
   <link rel="stylesheet" href="geotag.css" />
   <!-- link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" -->
   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin="">
   </script>
+  <script src="lib/markercluster/leaflet.markercluster.js"></script>
   <script src="src/mapmgr.js"></script>
   <script src="src/filemgr.js"></script>
   <script src="src/actionhandler.js"></script>
