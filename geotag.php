@@ -20,7 +20,7 @@
   <script src="lib/markercluster/leaflet.markercluster.js"></script>
 </head>
 
-<body onload="initialize()">
+<body onload="initialize()" onkeypress="keyPressHandler(event)">
   <h1>Geotagger v0.2</h1>
   <div class="c_drop_container">
     <button id="id_gpx_btn" class="c_drop_button c_disabled" onclick="removeGPX(event)">Remove GPX files</button>

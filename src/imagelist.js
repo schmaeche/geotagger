@@ -90,6 +90,15 @@ var GTimageList = {
     }
   },
 
+  selectAllImages: function() {
+    var elems = document.getElementsByClassName("c_img_thumb");
+    for (var i = 0; i < elems.length; i++) {
+      if( !elems[i].classList.contains("img_loading")) {
+        elems[i].classList.add("select");
+      }
+    }
+  },
+
   /******************************************************************************
    dragging functions
   ******************************************************************************/

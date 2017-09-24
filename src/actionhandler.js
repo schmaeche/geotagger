@@ -280,6 +280,18 @@ function updateAdjustment(e) {
   updateGeoLocations();
 }
 
+function keyPressHandler(e) {
+  if( (e.ctrlKey || e.metaKey) && e.keyCode === 97) {
+    if( e.preventDefault) {
+      e.preventDefault();
+    }
+    if (e.stopPropagation) {
+      e.stopPropagation(); // stops the browser from redirecting.
+    }
+    GTimageList.selectAllImages();
+  }
+}
+
 /******************************************************************************
 Ajax interaction functions
 ******************************************************************************/
