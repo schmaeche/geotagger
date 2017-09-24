@@ -19,7 +19,27 @@ function initialize() {
   GTimageList.getNextImage();
 }
 
-function getMapTooltip( image) {
+function getMapTooltip( image, geoLoc = GEO_LOC_ORIGINAL) {
+
+  var dateVal, latVal, lngVal;
+  switch (geoLoc) {
+    case GEO_LOC_ORIGINAL:
+    dateVal = image.originalDate;
+    latVal = image.originalLat;
+    lngVal = image.originalLng;
+    break;
+    case GEO_LOC_NEW:
+    dateVal = image.originalDate; // newDate should not be used for display
+    latVal = image.newLat;
+    lngVal = image.newLng;
+    break;
+    default:
+    dateVal = image.originalDate;
+    latVal = 0.0;
+    lngVal = 0.0;
+    break;
+  }
+
   // create container and add all elements
   var tooltip = document.createElement("div");
   tooltip.setAttribute("class", "c_map_marker_tooltip");
@@ -33,11 +53,11 @@ function getMapTooltip( image) {
   var file = document.createElement("div");
   file.innerHTML = "<strong>" + image.filename + "</strong>";
   var date = document.createElement("div");
-  date.innerHTML = "<strong>Date: </strong>" + image.date.toLocaleString();
+  date.innerHTML = "<strong>Date: </strong>" + dateVal.toLocaleString();
   var lat = document.createElement("div");
-  lat.innerHTML = "<strong>Latitude: </strong>" + image.lat.toFixed(6);
+  lat.innerHTML = "<strong>Latitude: </strong>" + latVal.toFixed(6);
   var lng = document.createElement("div");
-  lng.innerHTML = "<strong>Longitude: </strong>" + image.lng.toFixed(6);
+  lng.innerHTML = "<strong>Longitude: </strong>" + lngVal.toFixed(6);
   tooltip.appendChild(file);
   tooltip.appendChild(date);
   tooltip.appendChild(lat);
@@ -54,11 +74,11 @@ Map interaction functions
 // automatically being removed from map
 function showImageOnMap( node, geoLoc) {
 
+  var image = GTimageList.getImageFromElement(node);
   if( geoLoc & GEO_LOC_ORIGINAL ) {
-    var image = GTimageList.getImageFromElement(node, GEO_LOC_ORIGINAL);
-    if( image.lat && image.lng) {
+    if( image.originalLat && image.originalLng) {
       // add image marker to map
-      GTmap.addImgToMap( image, getMapTooltip(image), false);
+      GTmap.addImgToMap( image, getMapTooltip(image, GEO_LOC_ORIGINAL), false);
       // show pin icon on image when lat and lng are set for image
       var pinElem = node.getElementsByClassName("c_img_pin")[0];
       pinElem.className = pinElem.className.replace('c_disabled', '');
@@ -66,20 +86,18 @@ function showImageOnMap( node, geoLoc) {
   }
 
   if( geoLoc & GEO_LOC_NEW) {
-    // get image url, date and filename from each element
-    var image = GTimageList.getImageFromElement(node, GEO_LOC_NONE);
-
+    // set new date according to latest settings of time adjustment
     var date = new Date( node.getElementsByClassName("img_createdate")[0].dataset.date).getTime();
     var timeOffsetSec = parseInt( document.getElementById( "id_range_time_out").getAttribute("value"));
-    image.date = new Date( date + timeOffsetSec * 1000);
+    image.newDate = new Date( date + timeOffsetSec * 1000);
 
     // check if element is on map and add a marker
     var latlng = GTmap.getGeoLocation( image);
     if( latlng ) {
       // update tooltip data
-      image.lat = latlng.lat;
-      image.lng = latlng.lng;
-      var tooltip = getMapTooltip( image);
+      image.newLat = latlng.lat;
+      image.newLng = latlng.lng;
+      var tooltip = getMapTooltip( image, GEO_LOC_NEW);
       GTmap.updateImgOnMap(image, tooltip);
       GTimageList.updateImageTooltipLatLng( node, image);
       updateGeoTagButton();
@@ -120,7 +138,7 @@ function removeImage( node, geoLoc) {
       if( lngElem.length) {
         ttipElem.removeChild(lngElem[0]);
       }
-      var image = GTimageList.getImageFromElement(node, GEO_LOC_NEW);
+      var image = GTimageList.getImageFromElement(node);
       GTmap.removeImageMarker(image, LAYER_GEO_TAG);
       updateGeoTagButton();
     }
@@ -162,10 +180,10 @@ function updateGeoLocations() {
 // adds a marker on map and updates tooltip data
 function setImageGeoLocation( node, lat, lng) {
   // add new marker and tooltip to map
-  var image = GTimageList.getImageFromElement(node, GEO_LOC_NONE);
-  image.lat = lat;
-  image.lng = lng;
-  var tooltip = getMapTooltip( image);
+  var image = GTimageList.getImageFromElement(node);
+  image.newLat = lat;
+  image.newLng = lng;
+  var tooltip = getMapTooltip( image, GEO_LOC_NEW);
   GTmap.updateImgOnMap( image, tooltip);
   GTimageList.updateImageTooltipLatLng( node, image);
   updateGeoTagButton();

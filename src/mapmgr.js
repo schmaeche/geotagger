@@ -315,7 +315,12 @@ GTmap.drawGPXTrack = function( gpxDoc) {
 
   track.on("mousemove", function(e) {
     var eleTimeSpeed = this.getInterpolatedEleTimeSpeed( e.latlng);
-    var tooltip = getMapTooltip( new Image(this.name, "", eleTimeSpeed[1], e.latlng.lat, e.latlng.lng));
+    var image = new Image();
+    image.filename = this.name;
+    image.originalDate = eleTimeSpeed[1]
+    image.originalLat = e.latlng.lat
+    image.originalLng = e.latlng.lng;
+    var tooltip = getMapTooltip( image, GEO_LOC_ORIGINAL);
 
     elem = document.createElement('div');
     elem.innerHTML = "<strong>Elevation: </strong>" + eleTimeSpeed[0] + " m";
@@ -394,21 +399,30 @@ GTmap.updateImgOnMap = function( image, tooltip='') {
   var layers = newImageLayer.getLayers();
   for (var i = 0; i < layers.length; i++) {
     if( layers[i].options.alt === image.filename) {
-      //console.log("found image marker on map");
       // update to new position
-      layers[i].setLatLng([image.lat,image.lng]);
+      layers[i].setLatLng([image.newLat,image.newLng]);
       layers[i].setTooltipContent(tooltip);
       return;
     }
   }
   // create new marker if not existent
-  var marker = L.marker( [image.lat,image.lng], {icon: NewImgMarkerIcon, riseOnHover: true, alt: image.filename});
+  var marker = L.marker( [image.newLat,image.newLng], {icon: NewImgMarkerIcon, riseOnHover: true, alt: image.filename});
   marker.bindTooltip( tooltip, {offset: [10,-10], direction: "right", className: "c_track_tooltip"});
   newImageLayer.addLayer(marker);
 }
 
 GTmap.addImgToMap = function( image, tooltip = '', isNew = false) {
-  var marker = L.marker( [image.lat,image.lng], {icon: (isNew) ? NewImgMarkerIcon : ImgMarkerIcon, riseOnHover: true, alt: image.filename});
+  var lat, lng, icon;
+  if( isNew) {
+    lat = image.newLat;
+    lng = image.newLng;
+    icon = NewImgMarkerIcon;
+  }
+  else {
+    lat = image.originalLat;
+    lng = image.originalLng;
+    icon = ImgMarkerIcon;  }
+  var marker = L.marker( [lat,lng], {icon: icon, riseOnHover: true, alt: image.filename});
   marker.bindTooltip( tooltip, {offset: [10,-10], direction: "right", className: "c_track_tooltip"});
   ((isNew) ? newImageLayer : imageLayer).addLayer(marker);
 }
@@ -421,7 +435,7 @@ GTmap.getGeoLocation = function(image) {
   var latlng;
   var layer = trackLayer.getLayers();
   for (var i = 0; i < layer.length; i++) {
-    latlng = layer[i].getLatLngFromDate( image.date);
+    latlng = layer[i].getLatLngFromDate( image.newDate);
     if( latlng) {
       return latlng;
     }

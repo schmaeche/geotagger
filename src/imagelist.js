@@ -3,12 +3,15 @@
 // @date September 2017
 //
 
-var Image = function( filename, url, date, lat = .0, lng = .0){
-  this.filename = filename;
-  this.url = url;
-  this.date = date;
-  this.lat = lat;
-  this.lng = lng;
+var Image = function(){
+  this.filename = "";
+  this.url = "";
+  this.originalDate = new Date(0);
+  this.newDate = new Date(0);
+  this.originalLat = .0;
+  this.originalLng = .0;
+  this.newLat = .0;
+  this.newLng = .0;
 };
 
 
@@ -17,7 +20,7 @@ var GTimageList = {
    helper functions
   ******************************************************************************/
   // gets a Image object from the given list node
-  getImageFromElement: function(node, geoLoc) {
+  getImageFromElement: function(node) {
     var image = new Image();
     // set filename (mandatory element)
     image.filename = node.getElementsByClassName("img_filename")[0].innerHTML;
@@ -26,29 +29,20 @@ var GTimageList = {
     // set date (optional element)
     var dateElem = node.getElementsByClassName("img_createdate");
     if( dateElem.length) {
-      image.date = new Date( dateElem[0].dataset.date);
+      image.originalDate = new Date( dateElem[0].dataset.date);
     }
     // set latitude and longitude (optional elements)
-    switch (geoLoc) {
-      case GEO_LOC_ORIGINAL:
-        var latElem = node.getElementsByClassName("img_lat");
-        var lngElem = node.getElementsByClassName("img_lng");
-        if( latElem.length && lngElem.length) {
-          image.lat = parseFloat( latElem[0].dataset.lat);
-          image.lng = parseFloat( lngElem[0].dataset.lng);
-        }
-        break;
-      case GEO_LOC_NEW:
-        var latElem = node.getElementsByClassName("img_new_lat");
-        var lngElem = node.getElementsByClassName("img_new_lng");
-        if( latElem.length && lngElem.length) {
-          image.lat = parseFloat( latElem[0].dataset.lat);
-          image.lng = parseFloat( lngElem[0].dataset.lng);
-        }
-        break;
-      case GEO_LOC_NONE:
-      default:
-        break;
+    var latElem = node.getElementsByClassName("img_lat");
+    var lngElem = node.getElementsByClassName("img_lng");
+    if( latElem.length && lngElem.length) {
+      image.originalLat = parseFloat( latElem[0].dataset.lat);
+      image.originalLng = parseFloat( lngElem[0].dataset.lng);
+    }
+    latElem = node.getElementsByClassName("img_new_lat");
+    lngElem = node.getElementsByClassName("img_new_lng");
+    if( latElem.length && lngElem.length) {
+      image.newLat = parseFloat( latElem[0].dataset.lat);
+      image.newLng = parseFloat( lngElem[0].dataset.lng);
     }
 
     return image;
@@ -108,25 +102,27 @@ var GTimageList = {
 
     var latElems = node.getElementsByClassName("img_new_lat");
     if(latElems.length) {
-      latElems[0].innerHTML = "New latitude: " + image.lat.toFixed(6);
+      latElems[0].setAttribute('data-lat', image.newLat);
+      latElems[0].innerHTML = "New latitude: " + image.newLat.toFixed(6);
     }
     else {
       var newElem = document.createElement('div');
       newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lat');
-      newElem.setAttribute('data-lat', image.lat);
-      newElem.innerHTML = "New latitude: " + image.lat.toFixed(6);
+      newElem.setAttribute('data-lat', image.newLat);
+      newElem.innerHTML = "New latitude: " + image.newLat.toFixed(6);
       tooltip.appendChild(newElem);
     }
 
     var lngElems = node.getElementsByClassName("img_new_lng");
     if(lngElems.length) {
-      lngElems[0].innerHTML = "New longitude: " + image.lng.toFixed(6);
+      lngElems[0].setAttribute('data-lng', image.newLng);
+      lngElems[0].innerHTML = "New longitude: " + image.newLng.toFixed(6);
     }
     else {
       var newElem = document.createElement('div');
       newElem.setAttribute('class', 'c_img_tooltip_elem img_new_lng');
-      newElem.setAttribute('data-lng', image.lng);
-      newElem.innerHTML = "New longitude: " + image.lng.toFixed(6);
+      newElem.setAttribute('data-lng', image.newLng);
+      newElem.innerHTML = "New longitude: " + image.newLng.toFixed(6);
       tooltip.appendChild(newElem);
     }
   },
