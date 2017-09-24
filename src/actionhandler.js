@@ -221,8 +221,13 @@ Map dragging functions
 ******************************************************************************/
 function handleImgDragStart(e) {
   e.currentTarget.classList.add("select");
-  var imgElem = e.currentTarget.parentNode;
-  e.dataTransfer.setData('text/html', imgElem.getElementsByClassName("img_filename")[0].innerHTML);
+  var files = [];
+  var selectElems = document.getElementsByClassName("select");
+  for (var i = 0; i < selectElems.length; i++) {
+    files.push(selectElems[i].parentNode.getElementsByClassName("img_filename")[0].innerHTML);
+  }
+
+  e.dataTransfer.setData('application/json', JSON.stringify(files));
   e.dataTransfer.setDragImage( e.currentTarget, -20, 125);
 }
 
@@ -273,12 +278,14 @@ function dropDragPin(e) {
 
   var latlng = GTmap.hideDropPin(e);
   if( latlng) {
-    var file = e.dataTransfer.getData('text/html');
+    var files = JSON.parse(e.dataTransfer.getData('application/json'));
     var elems = document.getElementsByClassName("img_filename");
     for (var i = 0; i < elems.length; i++) {
-      if( elems[i].innerHTML == file) {
-        setImageGeoLocation( elems[i].parentNode.parentNode, latlng.lat, latlng.lng);
-        break;
+      for (var j = 0; j < files.length; j++) {
+        if( elems[i].innerHTML === files[j]) {
+          setImageGeoLocation( elems[i].parentNode.parentNode, latlng.lat, latlng.lng);
+          break;
+        }
       }
     }
 
