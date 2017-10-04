@@ -274,8 +274,8 @@ GTmap.initMap = function() {
   this._setCurrentPosition(null);
 
   trackLayer = L.featureGroup().addTo( map);
-  imageLayer = L.markerClusterGroup().addTo( map);
-  newImageLayer = L.markerClusterGroup().addTo( map);
+  imageLayer = L.markerClusterGroup({maxClusterRadius: 10}).addTo( map);
+  newImageLayer = L.markerClusterGroup({maxClusterRadius: 10}).addTo( map);
 }
 
 //###############################
